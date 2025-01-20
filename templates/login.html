@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #81a3d3, #1c6ea4);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            overflow: hidden;
+        }
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            width: 200%;
+            height: 12%;
+            background: rgba(2, 73, 155, 0.4);
+            border-radius: 50%;
+            animation: waveMove 6s infinite linear;
+        }
+
+        .wave:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .wave:nth-child(2) {
+            bottom: 5%;
+            background: rgba(74, 144, 226, 0.6);
+            animation-delay: 2s;
+        }
+
+        .wave:nth-child(3) {
+            bottom: 10%;
+            background: rgba(74, 144, 226, 0.8);
+            animation-delay: 4s;
+        }
+
+        @keyframes waveMove {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        .container {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            width: 500px;
+            max-width: 90%;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .form-container {
+            padding: 30px;
+            position: relative;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #444;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.4);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #4a90e2;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .toggle-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .toggle-link a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-link a:hover {
+            color: #357abd;
+            text-decoration: underline;
+        }
+
+        /* Smooth Slide Transition */
+        .hidden {
+            display: none;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Add shadow on hover */
+        .form-container:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+    <div class="container fade-in">
+        <!-- Register Form -->
+        <div class="form-container hidden" id="register-form">
+            <h2>Register</h2>
+            <form method="post" action="/register">
+                <div class="form-group">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" name="username" placeholder="Choose a new username" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" name="password" placeholder="Choose a new password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+            <div class="toggle-link">
+                Already have an account? <a onclick="toggleForm('login')">Login</a>
+            </div>
+        </div>
+
+        <!-- Login Form -->
+        <div class="form-container" id="login-form">
+            <h2>Login</h2>
+            <form method="post" action="/login">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <div class="toggle-link">
+                New here? <a onclick="toggleForm('register')">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to toggle between Login and Register forms
+        function toggleForm(formType) {
+            const registerForm = document.getElementById('register-form');
+            const loginForm = document.getElementById('login-form');
+
+            if (formType === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

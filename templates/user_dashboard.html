@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #6fb1fc, #1c74d3);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .wave {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0.5;
+            animation: waveAnimation 10s linear infinite;
+        }
+
+        .wave:nth-child(1) {
+            top: 20%;
+            animation-duration: 12s;
+        }
+
+        .wave:nth-child(2) {
+            top: 40%;
+            animation-duration: 10s;
+        }
+
+        .wave:nth-child(3) {
+            top: 60%;
+            animation-duration: 8s;
+        }
+
+        @keyframes waveAnimation {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            color: #0bdfdbfb;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        p {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .graph-container {
+            margin-top: 20px;
+            position: relative;
+        }
+
+        canvas {
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        canvas:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-btn {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c9302c;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <div class="container">
+        <h1>Welcome, {{ user.username }}</h1>
+        <h2>Today's Water Usage</h2>
+        <p><strong>Date:</strong> {{ latest_usage.date }}</p>
+        <p><strong>Usage:</strong> {{ latest_usage.usage }} L</p>
+        <div class="graph-container">
+            <canvas id="waterUsageChart" width="400" height="200"></canvas>
+        </div>
+        <button class="logout-btn" onclick="window.location.href='/login'">Logout</button>
+    </div>
+
+    <script>
+        // Replace with actual data passed from the server
+        const waterUsageData = {{ user.water_usage|tojson }};
+
+        // Parse data for the chart
+        const labels = waterUsageData.map(data => data.date);
+        const usageData = waterUsageData.map(data => data.usage);
+
+        // Initialize the chart with animation
+        const ctx = document.getElementById('waterUsageChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Water Usage (Liters)',
+                    data: usageData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    hoverBackgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    hoverBorderColor: 'rgba(54, 162, 235, 1)',
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 2000, // 2 seconds
+                    easing: 'easeOutBounce',
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#333',
+                            font: { size: 14 }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date',
+                            color: '#666',
+                            font: { size: 16 }
+                        },
+                        grid: { display: false },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Water Usage (Liters)',
+                            color: '#666',
+                            font: { size: 16 }
+                        },
+                        beginAtZero: true,
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
